@@ -57,3 +57,8 @@ async def predict_audio(file: UploadFile = File(...)):
         os.remove(temp_file_path)
     
     return JSONResponse(content={"predicted_reason": predicted_label})
+
+if __name__ == "__main__":
+    import uvicorn
+    # For production, you might disable reload (or set it based on a config variable)
+    uvicorn.run("app:app", host="0.0.0.0", port=3004, reload=False)
