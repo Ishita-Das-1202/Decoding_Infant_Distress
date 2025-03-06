@@ -3,6 +3,7 @@ import numpy as np
 import librosa
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import joblib
 import tempfile
 
@@ -16,6 +17,15 @@ clf = joblib.load(model_path)
 label_encoder = joblib.load(label_encoder_path)
 
 app = FastAPI(title="Infant Cry Analysis API")
+
+# Add CORS middleware to allow all origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def extract_features(file_path):
     y, sr = librosa.load(file_path, sr=None)
@@ -60,5 +70,4 @@ async def predict_audio(file: UploadFile = File(...)):
 
 if __name__ == "__main__":
     import uvicorn
-    # For production, you might disable reload (or set it based on a config variable)
     uvicorn.run("app:app", host="127.0.0.1", port=3004, reload=False)
